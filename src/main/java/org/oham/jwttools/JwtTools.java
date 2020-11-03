@@ -7,7 +7,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.oham.jwttools.utils.ValidationUtil;
 import org.oham.jwttools.vo.JwkVo;
 
 import java.nio.charset.Charset;
@@ -35,8 +34,6 @@ public class JwtTools {
      * @return java.lang.String
      **/
     public static String createToken(JwkVo jwk, JWTCreator.Builder jwtBuilder) {
-        ValidationUtil.verifyJwkVo(jwk);
-
         Algorithm alg = new AlgorithmBuilder().getAlgorithm(jwk);
         String token = jwtBuilder.sign(alg);
 
@@ -54,7 +51,6 @@ public class JwtTools {
      */
     public static DecodedJWT verifySign(JwkVo jwk, String token) {
         log.debug("Begin to verify token: {}", token);
-        ValidationUtil.verifyJwkVo(jwk);
 
         Algorithm alg = new AlgorithmBuilder().getAlgorithm(jwk);
         JWTVerifier verifier = JWT.require(alg).build();
