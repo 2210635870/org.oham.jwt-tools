@@ -1,6 +1,7 @@
 ## 基于 com.auth0:java-jwt 做的一个 Json Web Token 简单封装库
 
-[![Coverage Status](https://coveralls.io/repos/gh/2210635870/org.oham.jwt-tools/badge.svg?branch=main)](https://coveralls.io/gh/2210635870/org.oham.jwt-tools?branch=main)
+[![Build Status](https://travis-ci.org/2210635870/org.oham.jwt-tools.svg?branch=main)](https://travis-ci.org/2210635870/org.oham.jwt-tools)
+[![Coverage Status](https://codecov.io/gh/2210635870/org.oham.jwt-tools/badge.svg?branch=main)](https://codecov.io/gh/2210635870/org.oham.jwt-tools?branch=main)
 
 支持如下加密算法：
 * HS256: HMAC using SHA-256
