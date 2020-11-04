@@ -1,5 +1,6 @@
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.apache.commons.codec.binary.Base64;
@@ -17,7 +18,6 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -108,14 +108,16 @@ public class TestCase {
         JwkVo jwkVo = AlgorithmEnum.HS256.initJwkVO();
         jwkVo.setPrivateExponent("test");
 
+        // token 失效日期（60分钟有效时长）
+        Date expiredAt = Date.from(
+                LocalDateTime.now().plusMinutes(60)
+                .atZone(ZoneId.systemDefault()).toInstant());
+
         JWTCreator.Builder jwtBuilder = JWT.create()
-                .withIssuer("org.oham")
-                .withKeyId(jwkVo.getKid())
-                .withIssuedAt(Calendar.getInstance().getTime())
-                .withExpiresAt(Date.from(
-                            LocalDateTime.now().plusMinutes(60)
-                                .atZone(ZoneId.systemDefault())
-                                .toInstant()));
+                .withIssuer("org.oham")                            // 设置 token 发行者
+                .withKeyId(jwkVo.getKid())                         // 设置 token key id
+                .withIssuedAt(Calendar.getInstance().getTime())    // 设置 token 发行日期
+                .withExpiresAt(expiredAt);                         // 设置 token 失效日期 （60分钟有效时长）
 
         createAndVerifyToken(jwkVo, jwtBuilder);
     }
@@ -197,7 +199,7 @@ public class TestCase {
     @Test
     public void testES256() throws Exception {
         JwkVo jwkVo = AlgorithmEnum.ES256.initJwkVO();
-        // 生成并设置 RSA 密钥对
+        // 生成并设置 ECDSA 密钥对
         EcdsaKeyPairVo ecdsaKeyPairVo = KeyUtil.generateEcdsaKeyPair(ConstantsUtil.ECDSA_P_256);
         jwkVo.setPrivateExponent(ecdsaKeyPairVo.getPrivateKeyStr());
         jwkVo.setPublicExponent(ecdsaKeyPairVo.getPublicKeyStr());
@@ -217,7 +219,7 @@ public class TestCase {
     @Test
     public void testES256K() throws Exception {
         JwkVo jwkVo = AlgorithmEnum.ES256K.initJwkVO();
-        // 生成并设置 RSA 密钥对
+        // 生成并设置 ECDSA 密钥对
         EcdsaKeyPairVo ecdsaKeyPairVo = KeyUtil.generateEcdsaKeyPair(ConstantsUtil.ECDSA_SEC_P_256K1);
         jwkVo.setPrivateExponent(ecdsaKeyPairVo.getPrivateKeyStr());
         jwkVo.setPublicExponent(ecdsaKeyPairVo.getPublicKeyStr());
@@ -237,7 +239,7 @@ public class TestCase {
     @Test
     public void testES384() throws Exception {
         JwkVo jwkVo = AlgorithmEnum.ES384.initJwkVO();
-        // 生成并设置 RSA 密钥对
+        // 生成并设置 ECDSA 密钥对
         EcdsaKeyPairVo ecdsaKeyPairVo = KeyUtil.generateEcdsaKeyPair(ConstantsUtil.ECDSA_P_384);
         jwkVo.setPrivateExponent(ecdsaKeyPairVo.getPrivateKeyStr());
         jwkVo.setPublicExponent(ecdsaKeyPairVo.getPublicKeyStr());
@@ -252,6 +254,47 @@ public class TestCase {
                                 .toInstant()));
 
         createAndVerifyToken(jwkVo, jwtBuilder);
+    }
+
+    /**
+     * @Author 欧航
+     * @Description 测试验签失败
+     * @Date 2020/11/4 10:37
+     * @return void
+     */
+    @Test
+    public void testVerifyIllegalToken() {
+        JwkVo jwkVo = AlgorithmEnum.HS512.initJwkVO();
+        jwkVo.setPrivateExponent("test-key");
+
+        JWTCreator.Builder jwtBuilder = JWT.create()
+                .withIssuer("org.oham.jwttools")
+                .withKeyId(jwkVo.getKid())
+                .withIssuedAt(Calendar.getInstance().getTime())
+                .withExpiresAt(Date.from(
+                        LocalDateTime.now().plusMinutes(30)
+                                .atZone(ZoneId.systemDefault())
+                                .toInstant()));
+
+        // 数据遭篡改
+        Assert.assertThrows(SignatureVerificationException.class, () -> {
+            // 创建 token
+            String token = JwtTools.createToken(jwkVo, jwtBuilder);
+            // 模拟篡改数据
+            token = token.replace("a", "e");
+            // 验证 token
+            JwtTools.verifySign(jwkVo, token);
+        });
+
+        // 密钥错误
+        Assert.assertThrows(SignatureVerificationException.class, () -> {
+            // 创建 token
+            String token = JwtTools.createToken(jwkVo, jwtBuilder);
+            // 指定密钥错误
+            jwkVo.setPrivateExponent("test-key2");
+            // 验证 token
+            JwtTools.verifySign(jwkVo, token);
+        });
     }
 
     /**

@@ -6,11 +6,6 @@ import org.oham.jwttools.enumerations.AlgorithmEnum;
 import org.oham.jwttools.vo.JwkVo;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @Author 欧航
@@ -31,7 +26,7 @@ public class ValidationUtil {
      * @Author 欧航
      * @Description 校验签名算法字段取值合法性
      * @Date 2020/11/3 16:37
-     * @param jwkVo:
+     * @param jwkVo: JWK 密钥 vo 对象
      */
     public static void verifyJwkVo(JwkVo jwkVo) {
         String alg = jwkVo.getAlgorithm();
