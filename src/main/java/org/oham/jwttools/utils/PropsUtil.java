@@ -78,16 +78,4 @@ public class PropsUtil {
         }
         return messageProps.getProperty(propName);
     }
-
-    /**
-     * @Author 欧航
-     * @Description 判断配置项是否存在
-     * @Date 2020/11/3 15:10
-     * @param propName: 配置项
-     * @return boolean
-     */
-    public static boolean containsKey(String propName) {
-        return messageProps.containsKey(propName);
-    }
-
 }

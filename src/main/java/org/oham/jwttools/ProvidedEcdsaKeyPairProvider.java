@@ -15,14 +15,13 @@ import java.security.interfaces.ECPublicKey;
  * @Date 2020/11/2 15:25
  * @Version 1.0
  **/
-@Setter
 @Slf4j
 @Builder
-public class ProvidedEcdsaKeyPairProvider implements ECDSAKeyProvider {
+class ProvidedEcdsaKeyPairProvider implements ECDSAKeyProvider {
 
-    private String srcPrivateKey;
+    private final String srcPrivateKey;
 
-    private String srcPublicKey;
+    private final String srcPublicKey;
 
     @Override
     public ECPublicKey getPublicKeyById(String s) {

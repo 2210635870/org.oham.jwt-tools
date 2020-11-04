@@ -15,14 +15,13 @@ import java.security.interfaces.RSAPublicKey;
  * @Date 2020/10/30 15:31
  * @Version 1.0
  **/
-@Setter
 @Slf4j
 @Builder
-public class ProvidedRsaKeyPairProvider implements RSAKeyProvider {
+class ProvidedRsaKeyPairProvider implements RSAKeyProvider {
 
-    private String srcPrivateKey;
+    private final String srcPrivateKey;
 
-    private String srcPublicKey;
+    private final String srcPublicKey;
 
     @Override
     public RSAPublicKey getPublicKeyById(String s) {
