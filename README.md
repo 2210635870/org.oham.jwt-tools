@@ -1,5 +1,5 @@
 ## 基于 com.auth0:java-jwt 做的一个 Json Web Token 简单封装库
-https://travis-ci.com/github/2210635870/org.oham.jwt-tools
+
 [![Build Status](https://api.travis-ci.com/2210635870/org.oham.jwt-tools.svg?branch=main)](https://travis-ci.com/github/2210635870/org.oham.jwt-tools)
 [![Coverage Status](https://codecov.io/gh/2210635870/org.oham.jwt-tools/badge.svg?branch=main)](https://codecov.io/gh/2210635870/org.oham.jwt-tools?branch=main)
 
